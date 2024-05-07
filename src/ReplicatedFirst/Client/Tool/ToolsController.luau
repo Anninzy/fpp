@@ -31,7 +31,7 @@ UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
 		end
 	elseif equippedTool == "Explosion" then
 		if KeyCode == E then
-			_G.ChantController.BeginChant()
+			_G.ExplosionController.BeginChant()
 		end
 	end
 end)
