@@ -1,24 +1,26 @@
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local toolsRemotes = ReplicatedStorage.Remotes.Tool
-
-local playerTools = {}
+local remotesFolder = ReplicatedStorage.Remotes.Tool
+local module = {}
+module.playerTools = {}
+module.playerCooldowns = {}
 
 local function addTool(player, toolName)
-	playerTools[player][toolName] = true
-	toolsRemotes.AddTool:FireClient(player, toolName)
+	module.playerTools[player][toolName] = true
+	remotesFolder.AddTool:FireClient(player, toolName)
 end
 
 Players.PlayerAdded:Connect(function(player)
-	playerTools[player] = {}
+	module.playerTools[player] = {}
+	module.playerCooldowns[player] = {}
 
 	--TEMP
 	addTool(player, "Explosion")
 	addTool(player, "Revolver")
-	player.CharacterAdded:Wait()
-	toolsRemotes.ForceEquip:FireClient(player, "Revolver")
+	task.wait(0.5)
+	remotesFolder.ForceEquip:FireClient(player, "Revolver")
 	--TEMP
 end)
 
-return nil
+return module
