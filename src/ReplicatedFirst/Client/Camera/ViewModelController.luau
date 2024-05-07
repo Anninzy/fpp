@@ -33,7 +33,6 @@ function module.swapTool(toolName)
 	local tool = ReplicatedStorage.Assets.Tools[toolName].Handle:Clone()
 	local oldTool = viewModel:FindFirstChild("Handle")
 	
-	module.isSwapping = true
 	module.animationTracks["Swap"]:Play()
 	module.animationTracks["Swap"]:GetMarkerReachedSignal("HandHidden"):Wait()
 
@@ -43,9 +42,6 @@ function module.swapTool(toolName)
 
 	tool.RightArm.Part0 = viewModel.RightArm
 	tool.Parent = viewModel
-	
-	module.animationTracks["Swap"].Stopped:Wait()
-	module.isSwapping = false
 end
 
 return module
