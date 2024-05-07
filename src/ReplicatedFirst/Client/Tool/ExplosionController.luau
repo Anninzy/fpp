@@ -1,23 +1,13 @@
-local module = {}
-
---ChantController
-local ContextActionService = game:GetService('ContextActionService')
-local UserInputService = game:GetService('UserInputService')
-local ReplicatedStorage = game:GetService('ReplicatedStorage')
-local TweenService = game:GetService('TweenService')
-local Player = game:GetService('Players')
-
-local explosionRemotesFolder = ReplicatedStorage.Remotes.Weapons.Explosion
-
-local localPlayer = Player.LocalPlayer
-local explosionGui = localPlayer.PlayerGui:WaitForChild('Explosion')
-local revealFrame = explosionGui.Reveal
-local textCaptureBox = explosionGui.TextCapture
-local quoteLabel = revealFrame.Quote
+local Lighting = game:GetService("Lighting")
+local ContextActionService = game:GetService("ContextActionService")
+local UserInputService = game:GetService("UserInputService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TweenService = game:GetService("TweenService")
+local Player = game:GetService("Players")
 
 local FREEZE_ACTION = "freezeMovement"
-local formatString = '<stroke color="#000000" joins="round" thickness="25"><font color="#ffffff">%s</font>%s</stroke>'
-local quote1 = [[
+local FORMAT_STRING = '<stroke color="#000000" joins="round" thickness="25"><font color="#ffffff">%s</font>%s</stroke>'
+local QUOTE_1 = [[
 Darkness blacker than black and darker than dark,
 I beseech thee, combine with my deep crimson.
 The time of awakening cometh.
@@ -29,7 +19,7 @@ Return all creation to cinders,
 and come frome the abyss!
 Explosion!
 ]]
-local quote2 = [[
+local QUOTE_2 = [[
 Oh, blackness shrouded in light,
 Frenzied blaze clad in night,
 In the name of the crimson demons,
@@ -38,7 +28,7 @@ Summon before me the root of thy power hidden within the lands
 of the kingdom of demise!
 Explosion!
 ]]
-local quote3 = [[
+local QUOTE_3 = [[
 Crimson-black blaze, king of myriad worlds,
 though I promulgate the laws of nature,
 I am the alias of destruction incarnate
@@ -46,20 +36,27 @@ in accordance with the principles of all creation.
 Let the hammer of eternity descend unto me!
 Explosion!
 ]]
-local quote4 = [[
+local QUOTE_4 = [[
 By my efflux of deep crimson,
 topple this white world!
 ]]
-
-local fluency = 4
-local fluencyMap = {
-    [1] = quote1,
-    [2] = quote2,
-    [3] = quote3,
-    [4] = quote4
+local FLUENCY_MAP = {
+    [1] = QUOTE_1,
+    [2] = QUOTE_2,
+    [3] = QUOTE_3,
+    [4] = QUOTE_4
 }
 
-function module.Chant()
+local module = {}
+local fluency = 4
+local localPlayer = Player.LocalPlayer
+local explosionRemotesFolder = ReplicatedStorage.Remotes.Weapons.Explosion
+local explosionGui = localPlayer.PlayerGui.Explosion
+local revealFrame = explosionGui.Reveal
+local textCaptureBox = explosionGui.TextCapture
+local quoteLabel = revealFrame.Quote
+
+function module.BeginChant()
     explosionRemotesFolder.ChantBegin:FireServer()
 
     ContextActionService:BindAction(
@@ -73,7 +70,7 @@ function module.Chant()
 
     local explosionPosition
     local function getExplosionPosition()
-        local input, gameProcessedEvent = UserInputService.InputBegan:Wait()
+        local input, _gameProcessedEvent = UserInputService.InputBegan:Wait()
 
         if input.UserInputType ~= Enum.UserInputType.MouseButton1 then
             getExplosionPosition()
@@ -93,14 +90,14 @@ function module.Chant()
     end
     getExplosionPosition()
 
-    local quote = fluencyMap[fluency]
+    local quote = FLUENCY_MAP[fluency]
     local currentQuoteCharacter = 1
     local currentSentenceCharacter = 1
 
-    local sentences = string.split(quote, '\n')
+    local sentences = string.split(quote, "\n")
     local currentSentence = 1
     for i, sentence in ipairs(sentences) do
-        if sentence ~= '' then
+        if sentence ~= "" then
             continue
         end
 
@@ -117,11 +114,11 @@ function module.Chant()
 
         for i = 1, 20, 1 do
             Random.new():Shuffle(characters)
-            quoteLabel.Text = string.format(formatString, '', table.concat(characters))
+            quoteLabel.Text = string.format(FORMAT_STRING, "", table.concat(characters))
             task.wait(0.03)
         end
 
-        quoteLabel.Text = string.format(formatString, '', sentence)
+        quoteLabel.Text = string.format(FORMAT_STRING, "", sentence)
     end
 
     quoteLabel.Size = UDim2.new(1, 0, 0, explosionGui.AbsoluteSize.Y * 0.04)
@@ -143,16 +140,16 @@ function module.Chant()
         closePopup()
     end)
 
-    textChangedConnection = textCaptureBox:GetPropertyChangedSignal('Text'):Connect(function()
-        if textCaptureBox.Text == '' then
+    textChangedConnection = textCaptureBox:GetPropertyChangedSignal("Text"):Connect(function()
+        if textCaptureBox.Text == "" then
             return
         end
         local inputtedCharacter = textCaptureBox.Text
-        textCaptureBox.Text = ''
+        textCaptureBox.Text = ""
 
         local requiredCharacter = string.sub(quote, currentQuoteCharacter, currentQuoteCharacter)
-        if requiredCharacter == '\n' then
-            requiredCharacter = ' '
+        if requiredCharacter == "\n" then
+            requiredCharacter = " "
         end
 
         if inputtedCharacter ~= requiredCharacter then
@@ -161,7 +158,7 @@ function module.Chant()
         currentQuoteCharacter += 1
 
         local sentence = sentences[currentSentence]
-        quoteLabel.Text = string.format(formatString, string.sub(sentence, 1, currentSentenceCharacter), string.sub(sentence, currentSentenceCharacter + 1, -1))
+        quoteLabel.Text = string.format(FORMAT_STRING, string.sub(sentence, 1, currentSentenceCharacter), string.sub(sentence, currentSentenceCharacter + 1, -1))
 
         if currentSentenceCharacter ~= #sentence then
             currentSentenceCharacter += 1
@@ -184,14 +181,7 @@ function module.Chant()
 end
 
 --ExplosionRemoteController
-local ReplicatedStorage = game:GetService('ReplicatedStorage')
-local TweenService = game:GetService('TweenService')
-local Lighting = game:GetService('Lighting')
-
-local explosionRemotes = ReplicatedStorage.Remotes.Weapons.Explosion
 local explosionColorCorrection = Lighting.ExplosionColorCorrection
-
-local localPlayer = game:GetService('Players').LocalPlayer
 local character
 localPlayer.CharacterAdded:Wait()
 character = localPlayer.Character
@@ -207,7 +197,7 @@ local function removeChantSpinner(player)
     chantSpinnerPart:Destroy()
 end
 
-explosionRemotes.ChantBegin.OnClientEvent:Connect(function(player)
+explosionRemotesFolder.ChantBegin.OnClientEvent:Connect(function(player)
     local chantSpinnerPart = ReplicatedStorage.Models.ChantSpinner:Clone()
     chantSpinnerPart.Position = player.Character.HumanoidRootPart.Position * Vector3.new(1, 0, 1)
     chantSpinnerPart.Parent = player.Character
@@ -217,9 +207,9 @@ explosionRemotes.ChantBegin.OnClientEvent:Connect(function(player)
     TweenService:Create(chantSpinnerPart, TweenInfo.new(0.5, Enum.EasingStyle.Cubic, Enum.EasingDirection.In), {Size = Vector3.new(5, 0, 5)}):Play()
 end)
 
-explosionRemotes.ChantCancel.OnClientEvent:Connect(removeChantSpinner)
+explosionRemotesFolder.ChantCancel.OnClientEvent:Connect(removeChantSpinner)
 
-explosionRemotes.ChantComplete.OnClientEvent:Connect(function(player, explosionPosition)
+explosionRemotesFolder.ChantComplete.OnClientEvent:Connect(function(player, explosionPosition)
     removeChantSpinner(player)
     
     local explosionModel = ReplicatedStorage.Models.Explosion:Clone()
