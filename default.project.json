@@ -1,0 +1,119 @@
+{
+  "name": "roblox-fps",
+  "tree": {
+    "$className": "DataModel",
+
+    "ReplicatedStorage": {
+      "$path": "src/ReplicatedStorage",
+      "$ignoreUnknownInstances": true
+    },
+
+    "ServerScriptService": {
+      "$path": "src/ServerScriptService",
+      "$properties": {
+        "LoadStringEnabled": false
+      }
+    },
+
+    "ReplicatedFirst": {
+      "$path": "src/ReplicatedFirst"
+    },
+
+    "Workspace": {
+      "$properties": {
+        "AllowThirdPartySales": false,
+        "AvatarUnificationMode": "Disabled",
+        "ClientAnimatorThrottling": "Enabled",
+        "DecreaseMinimumPartDensityMode": {"Enum": 2},
+        "FallenPartsDestroyHeight": -500,
+        "FluidForces": "Default",
+        "GlobalWind":  [0, 0, 0],
+        "Gravity": 196.2,
+        "IKControlConstraintSupport": "Disabled",
+        "MeshPartHeadsAndAccessories": "Enabled",
+        "PhysicsSteppingMethod": "Adaptive",
+        "PlayerCharacterDestroyBehavior": "Enabled",
+        "Retargeting": "Enabled",
+        "SignalBehavior": "Deferred",
+        "TouchesUseCollisionGroups": false,
+        "AirDensity": 0.001,
+        "RejectCharacterDeletions": "Enabled",
+        "EditorLiveScripting": "Enabled",
+        "ModelStreamingBehavior": "Improved",
+        "StreamingEnabled": true,
+        "StreamingIntegrityMode": "PauseOutsideLoadedArea",
+        "StreamingMinRadius": 64,
+        "StreamingTargetRadius": 1024,
+        "StreamOutBehavior": "Opportunistic"
+      }
+    },
+    "Players": {
+      "$properties": {
+        "RespawnTime": 0,
+        "CharacterAutoLoads": true,
+        "UseStrafingAnimations": true
+      }
+    },
+    "Lighting": {
+      "$properties": {
+        "Ambient": [0, 0, 0],
+        "Brightness": 0,
+        "ColorShift_Bottom":  [0, 0, 0],
+        "ColorShift_Top":  [0, 0, 0],
+        "EnvironmentDiffuseScale": 1,
+        "EnvironmentSpecularScale": 1,
+        "GlobalShadows": false,
+        "OutdoorAmbient": [0, 0, 0],
+        "Technology": "Voxel",
+        "ClockTime": 12,
+        "GeographicLatitude": 0,
+        "FogColor": [0, 0, 0],
+        "FogStart": 0
+      }
+    },
+    "StarterGui": {
+      "$properties": {
+        "ScreenOrientation": "Sensor",
+        "RtlTextSupport": "Disabled",
+        "VirtualCursorMode": "Disabled"
+      }
+    },
+    "StarterPlayer": {
+      "$properties": {
+        "HealthDisplayDistance": 0,
+        "NameDisplayDistance": 0,
+        "CameraMode": "LockFirstPerson",
+        "DevComputerCameraMovementMode": "Classic",
+        "DevTouchCameraMovementMode": "Classic",
+        "CharacterMaxSlopeAngle": 89,
+        "CharacterWalkSpeed": 16,
+        "LoadCharacterAppearance": false,
+        "UserEmotesEnabled": false,
+        "CharacterJumpHeight": 7.2,
+        "CharacterUseJumpPower": false,
+        "DevComputerMovementMode": "KeyboardMouse",
+        "DevTouchMovementMode": "DynamicThumbstick",
+        "EnableMouseLockOption": false,
+        "AutoJumpEnabled": false
+      }
+    },
+    "SoundService": {
+      "$properties": {
+        "AmbientReverb": "NoReverb",
+        "DistanceFactor": 3.33,
+        "DopplerScale": 1,
+        "RespectFilteringEnabled": true,
+        "RolloffScale": 1,
+        "VolumetricAudio": "Enabled"
+      }
+    },
+    "TextChatService": {
+      "$properties": {
+        "ChatTranslationEnabled": true,
+        "ChatVersion": "TextChatService",
+        "CreateDefaultCommands": true,
+        "CreateDefaultTextChannels": true
+      }
+    }
+  }
+}
