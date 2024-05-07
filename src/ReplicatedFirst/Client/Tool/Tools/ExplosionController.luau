@@ -46,18 +46,29 @@ local FLUENCY_MAP = {
     [3] = QUOTE_3,
     [4] = QUOTE_4
 }
+local INFINITE_TWEEN_INFO = TweenInfo.new(3, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, -1)
 
 local module = {}
 local fluency = 4
 local localPlayer = Player.LocalPlayer
-local explosionRemotesFolder = ReplicatedStorage.Remotes.Weapons.Explosion
-local explosionGui = localPlayer.PlayerGui.Explosion
+local explosionRemotesFolder = ReplicatedStorage.Remotes.Tool.Explosion
+local explosionColorCorrection = Lighting.ExplosionColorCorrection
+local explosionGui = localPlayer.PlayerGui:WaitForChild("ExplosionChant")
 local revealFrame = explosionGui.Reveal
 local textCaptureBox = explosionGui.TextCapture
 local quoteLabel = revealFrame.Quote
 
+local function removeChantSpinner(player)
+    local chantSpinnerPart = player.Character.ChantSpinner
+    TweenService:Create(chantSpinnerPart.PointLight, TweenInfo.new(0.5, Enum.EasingStyle.Cubic, Enum.EasingDirection.In), {Brightness = 0}):Play()
+    local shrinkTween = TweenService:Create(chantSpinnerPart, TweenInfo.new(0.5, Enum.EasingStyle.Cubic, Enum.EasingDirection.In), {Size = Vector3.new(0, 0, 0)})
+    shrinkTween:Play()
+    shrinkTween.Completed:Wait()
+    chantSpinnerPart:Destroy()
+end
+
 function module.BeginChant()
-    explosionRemotesFolder.ChantBegin:FireServer()
+    explosionRemotesFolder.BeginChant:FireServer()
 
     ContextActionService:BindAction(
         FREEZE_ACTION,
@@ -180,34 +191,17 @@ function module.BeginChant()
     textCaptureBox:CaptureFocus()
 end
 
---ExplosionRemoteController
-local explosionColorCorrection = Lighting.ExplosionColorCorrection
-local character
-localPlayer.CharacterAdded:Wait()
-character = localPlayer.Character
-
-local indefiniteTweenInfo = TweenInfo.new(3, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, -1)
-
-local function removeChantSpinner(player)
-    local chantSpinnerPart = player.Character.ChantSpinner
-    TweenService:Create(chantSpinnerPart.PointLight, TweenInfo.new(0.5, Enum.EasingStyle.Cubic, Enum.EasingDirection.In), {Brightness = 0}):Play()
-    local shrinkTween = TweenService:Create(chantSpinnerPart, TweenInfo.new(0.5, Enum.EasingStyle.Cubic, Enum.EasingDirection.In), {Size = Vector3.new(0, 0, 0)})
-    shrinkTween:Play()
-    shrinkTween.Completed:Wait()
-    chantSpinnerPart:Destroy()
-end
-
-explosionRemotesFolder.ChantBegin.OnClientEvent:Connect(function(player)
+explosionRemotesFolder.BeginChant.OnClientEvent:Connect(function(player)
     local chantSpinnerPart = ReplicatedStorage.Models.ChantSpinner:Clone()
     chantSpinnerPart.Position = player.Character.HumanoidRootPart.Position * Vector3.new(1, 0, 1)
     chantSpinnerPart.Parent = player.Character
     
     TweenService:Create(chantSpinnerPart.PointLight, TweenInfo.new(0.5, Enum.EasingStyle.Cubic, Enum.EasingDirection.In), {Brightness = 40}):Play()
-    TweenService:Create(chantSpinnerPart, indefiniteTweenInfo, {Orientation = Vector3.new(0, 360, 0)}):Play()
+    TweenService:Create(chantSpinnerPart, INFINITE_TWEEN_INFO, {Orientation = Vector3.new(0, 360, 0)}):Play()
     TweenService:Create(chantSpinnerPart, TweenInfo.new(0.5, Enum.EasingStyle.Cubic, Enum.EasingDirection.In), {Size = Vector3.new(5, 0, 5)}):Play()
 end)
 
-explosionRemotesFolder.ChantCancel.OnClientEvent:Connect(removeChantSpinner)
+explosionRemotesFolder.CancelChant.OnClientEvent:Connect(removeChantSpinner)
 
 explosionRemotesFolder.ChantComplete.OnClientEvent:Connect(function(player, explosionPosition)
     removeChantSpinner(player)
@@ -221,7 +215,7 @@ explosionRemotesFolder.ChantComplete.OnClientEvent:Connect(function(player, expl
         local originalSize = ringPart.Size
         ringPart.Size = Vector3.new(0, 0, 0)
         TweenService:Create(ringPart, TweenInfo.new(2), {Size = originalSize}):Play()
-        TweenService:Create(ringPart, indefiniteTweenInfo, {Orientation = Vector3.new(0, 360, 0)}):Play()
+        TweenService:Create(ringPart, INFINITE_TWEEN_INFO, {Orientation = Vector3.new(0, 360, 0)}):Play()
     end
     
     TweenService:Create(Lighting, TweenInfo.new(1), {ClockTime = 0}):Play()
@@ -245,15 +239,15 @@ explosionRemotesFolder.ChantComplete.OnClientEvent:Connect(function(player, expl
         local startTime = os.clock()
         
         local function randomOffset()
-            return math.random(-50, 50) / ((character.HumanoidRootPart.Position - ballPart.Position).Magnitude / 10)
+            return math.random(-50, 50) / ((player.Character.HumanoidRootPart.Position - ballPart.Position).Magnitude / 10)
         end
         
         repeat
-            character.Humanoid.CameraOffset = Vector3.new(randomOffset(), randomOffset(), randomOffset())
+            player.Character.Humanoid.CameraOffset = Vector3.new(randomOffset(), randomOffset(), randomOffset())
             task.wait()
         until os.clock() - startTime >= 5 --until final tween is over
         
-        character.Humanoid.CameraOffset = Vector3.new(0, 0, 0)
+        player.Character.Humanoid.CameraOffset = Vector3.new(0, 0, 0)
     end)()
     
     ballPart.Impact.Enabled = false

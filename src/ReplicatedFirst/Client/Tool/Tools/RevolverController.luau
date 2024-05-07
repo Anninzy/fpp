@@ -74,6 +74,10 @@ local function raycastBeam(origin, direction)
 	end
 end
 
+if Players.LocalPlayer.Character then
+	localCharacter = Players.LocalPlayer.Character
+end
+
 Players.LocalPlayer.CharacterAdded:Connect(function(character)
 	localCharacter = character
 	raycastParams.FilterDescendantsInstances = {localCharacter}
