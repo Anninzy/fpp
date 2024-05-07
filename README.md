@@ -3,12 +3,10 @@
 ## Rojo
 `Workspace`, `Lighting`, `ReplicatedStorage.Assets`, `StarterGui`, and `TextChatService` is not managed by Rojo.
 
-`Lighting` will be managed after https://github.com/rojo-rbx/rojo/issues/363 is closed.
-- `Lighting.FogEnd` = `inf`
-- `Lighting.Bloom.Threshold` = `inf`
-
 > [!NOTE]
-> ServerStorage is storing some old code, as it is temporary, it is not managed by Rojo.
+> `Lighting` will be managed after https://github.com/rojo-rbx/rojo/issues/363 is closed.
+> - `Lighting.FogEnd` = `inf`
+> - `Lighting.Bloom.Threshold` = `inf`
 
 ## TODO (listed in priority)
 - [ ] Reimplement old code
