@@ -1,4 +1,4 @@
-# roblox-fps
+# untitled-game
 
 ## Rojo
 `Workspace`, `Lighting`, `ReplicatedStorage.Assets`, `StarterGui`, and `TextChatService` is not managed by Rojo.
@@ -12,6 +12,7 @@
 - [ ] Reimplement old code
 - [ ] Refactor code
 - [ ] Complete Weapon: Revolver
+- [ ] Rename files to .lua for better GitHub categorisation
 - [ ] Go through `default.project.json` and set `$ignoreUnknownInstances` to false on most of everything
 - [ ] Merge with Aston
 - [ ] Movement system
