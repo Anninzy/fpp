@@ -1,8 +1,6 @@
 # untitled-game
 
 ## Rojo
-`Workspace`, `Lighting`, `ReplicatedStorage.Assets`, `StarterGui`, and `TextChatService` is not managed by Rojo.
-
 > [!NOTE]
 > `Lighting` will be managed after https://github.com/rojo-rbx/rojo/issues/363 is closed.
 > - `Lighting.FogEnd` = `inf`
@@ -12,12 +10,11 @@
 - [ ] Reimplement old code
 - [ ] Refactor code
 - [ ] Complete Weapon: Revolver
-- [ ] Rename files to .lua for better GitHub categorisation
-- [ ] Go through `default.project.json` and set `$ignoreUnknownInstances` to false on most of everything
 - [ ] Merge with Aston
 - [ ] Movement system
 - [ ] More dynamic camera that follows player movement
 - [ ] Animations
+- [ ] Use Rojo to manage all Roblox services
 - [ ] Figure out a way to add `ChatWindowConfiguration`, `ChatInputBarConfiguration`, and `BubbleChatConfiguration` to `default.project.json` so `TextChatService` can be managed
 
 ## Getting Started
