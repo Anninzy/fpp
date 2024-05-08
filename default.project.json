@@ -4,7 +4,7 @@
     "$className": "DataModel",
 
     "ReplicatedStorage": {
-      "$path": "src/ReplicatedStorage",
+      "$path": "src/shared",
       "$ignoreUnknownInstances": true
     },
 
@@ -13,13 +13,13 @@
         "LoadStringEnabled": false
       },
       "Server" : {
-        "$path": "src/Server"
+        "$path": "src/server"
       }
     },
 
     "ReplicatedFirst": {
       "Client" : {
-        "$path": "src/Client"
+        "$path": "src/client"
       }
     },
 
