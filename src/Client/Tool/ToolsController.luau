@@ -20,17 +20,15 @@ UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
 	end
 
 	local equippedTool = toolsOwned[equippedSlot]
-	local KeyCode = input.KeyCode
-	local E = Enum.KeyCode.E
 
 	if equippedTool == "Revolver" then
 		if input.UserInputType == Enum.UserInputType.MouseButton1 then
 			_G.RevolverController.ShootGun()
-		elseif KeyCode == E then
+		elseif input.UserInputType == Enum.UserInputType.MouseButton2 then
 			_G.RevolverController.TossCoin()
 		end
 	elseif equippedTool == "Explosion" then
-		if KeyCode == E then
+		if input.KeyCode == Enum.KeyCode.E then
 			_G.ExplosionController.BeginChant()
 		end
 	end
