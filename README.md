@@ -25,10 +25,10 @@
 To build the place from scratch, use:
 
 ```bash
-rojo build -o "roblox-fps.rbxlx"
+rojo build -o "untitled-game.rbxlx"
 ```
 
-Next, open `roblox-fps.rbxlx` in Roblox Studio and start the Rojo server:
+Next, open `untitled-game.rbxlx` in Roblox Studio and start the Rojo server:
 
 ```bash
 rojo serve
