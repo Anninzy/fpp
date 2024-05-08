@@ -12,7 +12,6 @@ function module.Initialize()
             remote.OnServerEvent:Connect(function(player, ...)
                 local toolName = folder.Name
                 local eventName = remote.Name
-                print(_G)
                 local onCooldown = _G.ToolsManager.playerCooldowns[player][eventName]
     
                 if not _G.ToolsManager.playerTools[player][toolName] then

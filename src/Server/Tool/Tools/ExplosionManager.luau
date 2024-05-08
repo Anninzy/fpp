@@ -6,6 +6,15 @@ local beginChantRemote = remotesFolder.BeginChant
 local cancelChantRemote = remotesFolder.CancelChant
 local chantCompleteRemote = remotesFolder.ChantComplete
 
+local module = {}
+module.handleRemote = {
+	["BeginChant"] = function(player, remote, explosionPosition)
+		-- TODO: Verify if player has Staff through WeaponsManager
+	-- TODO: Add disrupt/silence ability (e.g. getting shot) to stop chant
+		remote:FireAllClients(player, explosionPosition)
+	end,
+}
+
 beginChantRemote.OnServerEvent:Connect(function(player)
 	-- TODO: Verify if player has Staff through WeaponsManager
 	-- TODO: Add disrupt/silence ability (e.g. getting shot) to stop chant
@@ -39,4 +48,4 @@ chantCompleteRemote.OnServerEvent:Connect(function(player, explosionPosition)
 	end)()
 end)
 
-return {}
+return module
