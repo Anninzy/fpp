@@ -12,7 +12,6 @@
 - [ ] Reimplement old code
 - [ ] Refactor code
 - [ ] Complete Weapon: Revolver
-- [ ] Move `Client` and `Server` to src after editing `default.project.json`
 - [ ] Rename files to .lua for better GitHub categorisation
 - [ ] Go through `default.project.json` and set `$ignoreUnknownInstances` to false on most of everything
 - [ ] Merge with Aston

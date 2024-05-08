@@ -9,14 +9,18 @@
     },
 
     "ServerScriptService": {
-      "$path": "src/ServerScriptService",
       "$properties": {
         "LoadStringEnabled": false
+      },
+      "Server" : {
+        "$path": "src/Server"
       }
     },
 
     "ReplicatedFirst": {
-      "$path": "src/ReplicatedFirst"
+      "Client" : {
+        "$path": "src/Client"
+      }
     },
 
     "Workspace": {
