@@ -1,8 +1,10 @@
-# Project place file
-/roblox-fps.rbxlx
+# Roblox Studio place files
+/*.rbxlx
+/*.rbxl
 
 # Roblox Studio lock files
 /*.rbxlx.lock
 /*.rbxl.lock
 
+# Luau Language Server Rojo-style sourcemaps
 /sourcemap.json
