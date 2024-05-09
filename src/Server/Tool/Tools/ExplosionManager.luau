@@ -8,9 +8,14 @@ local chantCompleteRemote = remotesFolder.ChantComplete
 
 local module = {}
 module.handleRemote = {
-	["BeginChant"] = function(player, remote, explosionPosition)
+	["BeginChant"] = function(player, remote)
 		-- TODO: Verify if player has Staff through WeaponsManager
-	-- TODO: Add disrupt/silence ability (e.g. getting shot) to stop chant
+		-- TODO: Add disrupt/silence ability (e.g. getting shot) to stop chant
+		remote:FireAllClients(player)
+	end,
+	["SetExplosionLocation"] = function(player, remote, explosionPosition)
+		-- TODO: Verify if player has Staff through WeaponsManager
+		-- TODO: Add disrupt/silence ability (e.g. getting shot) to stop chant
 		remote:FireAllClients(player, explosionPosition)
 	end,
 }

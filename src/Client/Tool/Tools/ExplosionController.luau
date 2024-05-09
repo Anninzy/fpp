@@ -49,6 +49,7 @@ local FLUENCY_MAP = {
 local INFINITE_TWEEN_INFO = TweenInfo.new(3, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, -1)
 
 local module = {}
+local ongoingExplosions = {}
 local fluency = 4
 local localPlayer = Player.LocalPlayer
 local remotesFolder = ReplicatedStorage.Remotes.Tool.Explosion
@@ -59,7 +60,7 @@ local textCaptureBox = explosionGui.TextCapture
 local quoteLabel = revealFrame.Quote
 
 local function removeChantSpinner(player)
-	local chantSpinnerPart = player.Character.ChantSpinner
+	local chantSpinnerPart = workspace["MagicCircle" .. player.Name]
 	TweenService:Create(
 		chantSpinnerPart.PointLight,
 		TweenInfo.new(0.5, Enum.EasingStyle.Cubic, Enum.EasingDirection.In),
@@ -84,6 +85,7 @@ function module.BeginChant()
 
 	local explosionPosition
 	local function getExplosionPosition()
+		_G.MouseController.enableCursor("rbxasset://textures/Cursors/Gamepad/PointerOver.png")
 		local input, _gameProcessedEvent = UserInputService.InputBegan:Wait()
 
 		if input.UserInputType ~= Enum.UserInputType.MouseButton1 then
@@ -100,7 +102,9 @@ function module.BeginChant()
 			return
 		end
 
+		_G.MouseController.disableCursor()
 		explosionPosition = raycastResult.Position
+		remotesFolder.SetExplosionLocation:FireServer(explosionPosition)
 	end
 	getExplosionPosition()
 
@@ -202,6 +206,7 @@ end
 
 remotesFolder.BeginChant.OnClientEvent:Connect(function(player)
 	local magicCirclePart = ReplicatedStorage.Assets.Tools.Explosion.MagicCircle:Clone()
+	magicCirclePart.Name = "MagicCircle" .. player.Name
 	magicCirclePart.Position = player.Character.HumanoidRootPart.Position * Vector3.new(1, 0, 1)
 	magicCirclePart.Parent = workspace
 
@@ -220,13 +225,8 @@ end)
 
 remotesFolder.CancelChant.OnClientEvent:Connect(removeChantSpinner)
 
-remotesFolder.ChantComplete.OnClientEvent:Connect(function(player, explosionPosition)
-	removeChantSpinner(player)
-
-	local explosionModel = ReplicatedStorage.Models.Explosion:Clone()
-	local beamPart = explosionModel.Beam
-	local ballPart = explosionModel.Ball
-	local impactGui = ballPart.Impact
+remotesFolder.SetExplosionLocation.OnClientEvent:Connect(function(player, explosionPosition)
+	local explosionModel = ReplicatedStorage.Assets.Tools.Explosion.Explosion:Clone()
 
 	for _, ringPart in ipairs(explosionModel.Rings:GetChildren()) do
 		local originalSize = ringPart.Size
@@ -238,12 +238,21 @@ remotesFolder.ChantComplete.OnClientEvent:Connect(function(player, explosionPosi
 	TweenService:Create(Lighting, TweenInfo.new(1), { ClockTime = 0 }):Play()
 
 	explosionModel:PivotTo(
-		CFrame.new(explosionPosition + Vector3.new(0, beamPart.Size.X / 2, 0))
+		CFrame.new(explosionPosition + Vector3.new(0, explosionModel.Beam.Size.X / 2, 0))
 			* explosionModel.PrimaryPart.CFrame.Rotation
 	)
 	explosionModel.Parent = workspace
 
-	task.wait(2)
+	ongoingExplosions[player] = explosionModel
+end)
+
+remotesFolder.ChantComplete.OnClientEvent:Connect(function(player, explosionPosition)
+	removeChantSpinner(player)
+
+	local explosionModel = ongoingExplosions[player]
+	local beamPart = explosionModel.Beam
+	local ballPart = explosionModel.Ball
+	local impactGui = localPlayer.PlayerGui.ExplosionImpactFrame
 
 	beamPart.Size = Vector3.new(2000, 200, 200)
 	beamPart.Position = beamPart.Position * Vector3.new(1, 2, 1)
