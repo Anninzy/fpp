@@ -85,7 +85,7 @@ function module.BeginChant()
 
 	local explosionPosition
 	local function getExplosionPosition()
-		_G.MouseController.enableCursor("rbxasset://textures/Cursors/Gamepad/PointerOver.png")
+		_G.MouseController.toggleCursor("rbxasset://textures/Cursors/Gamepad/PointerOver.png")
 		local input, _gameProcessedEvent = UserInputService.InputBegan:Wait()
 
 		if input.UserInputType ~= Enum.UserInputType.MouseButton1 then
@@ -102,7 +102,7 @@ function module.BeginChant()
 			return
 		end
 
-		_G.MouseController.disableCursor()
+		_G.MouseController.toggleCursor()
 		explosionPosition = raycastResult.Position
 		remotesFolder.SetExplosionLocation:FireServer(explosionPosition)
 	end

@@ -1,27 +1,23 @@
 local UserInputService = game:GetService("UserInputService")
 local Players = game:GetService("Players")
 
-local hudGui = Players.LocalPlayer.PlayerGui:WaitForChild("HUD")
-local crosshairLabel = hudGui.Crosshair
-local freeCursorButton = hudGui.FreeCursor
 local module = {}
 
-function module.unlockCursor() end
+function module.toggleCursor(icon)
+	local hudGui = Players.LocalPlayer.PlayerGui:WaitForChild("HUD")
+	local showCursor = if icon then true else false
 
-function module.enableCursor(icon)
-	crosshairLabel.Visible = false
-	freeCursorButton.Visible = true
-	UserInputService.MouseIconEnabled = true
+	hudGui.Crosshair.Visible = not showCursor
+	hudGui.FreeCursor.Visible = showCursor
+	UserInputService.MouseIconEnabled = showCursor
+
+	if not icon then
+		return
+	end
+
 	UserInputService.MouseIcon = icon
 end
 
-function module.disableCursor()
-	crosshairLabel.Visible = true
-	freeCursorButton.Visible = false
-	UserInputService.MouseIconEnabled = false
-	UserInputService.MouseIcon = ""
-end
-
-module.disableCursor()
+module.toggleCursor()
 
 return module
