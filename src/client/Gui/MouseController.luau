@@ -18,6 +18,6 @@ function module.toggleCursor(icon)
 	UserInputService.MouseIcon = icon
 end
 
-module.toggleCursor()
+coroutine.wrap(module.toggleCursor)()
 
 return module

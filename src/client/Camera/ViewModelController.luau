@@ -31,7 +31,7 @@ RunService.RenderStepped:Connect(function(_deltaTime)
 	viewModel:PivotTo(camera.CFrame)
 end)
 
-function module.swapTool(toolName)
+module.swapTool = coroutine.wrap(function(toolName)
 	local tool = assetsFolder.Tools[toolName].Handle:Clone()
 	local oldTool = viewModel:FindFirstChild("Handle")
 
@@ -44,6 +44,6 @@ function module.swapTool(toolName)
 
 	tool.RightArm.Part0 = viewModel.RightArm
 	tool.Parent = viewModel
-end
+end)
 
 return module
