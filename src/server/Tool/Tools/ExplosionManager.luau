@@ -1,56 +1,45 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local remotesFolder = ReplicatedStorage.Remotes.Tool.Explosion
-local beginChantRemote = remotesFolder.BeginChant
-local cancelChantRemote = remotesFolder.CancelChant
-local chantCompleteRemote = remotesFolder.ChantComplete
-
+local explosionPositions = {}
 local module = {}
+
 module.handleRemote = {
-	["BeginChant"] = function(player, remote)
-		-- TODO: Verify if player has Staff through WeaponsManager
+	["BeginChant"] = function(firingPlayer, remote)
 		-- TODO: Add disrupt/silence ability (e.g. getting shot) to stop chant
-		remote:FireAllClients(player)
+		remote:FireAllClients(firingPlayer)
 	end,
-	["SetExplosionLocation"] = function(player, remote, explosionPosition)
-		-- TODO: Verify if player has Staff through WeaponsManager
-		-- TODO: Add disrupt/silence ability (e.g. getting shot) to stop chant
-		remote:FireAllClients(player, explosionPosition)
+
+	["SetExplosionLocation"] = function(firingPlayer, remote, explosionPosition)
+		explosionPositions[firingPlayer] = explosionPosition
+		remote:FireAllClients(firingPlayer, explosionPosition)
 	end,
-}
 
-beginChantRemote.OnServerEvent:Connect(function(player)
-	-- TODO: Verify if player has Staff through WeaponsManager
-	-- TODO: Add disrupt/silence ability (e.g. getting shot) to stop chant
-	beginChantRemote:FireAllClients(player)
-end)
-
-cancelChantRemote.OnServerEvent:Connect(function(player)
-	cancelChantRemote:FireAllClients(player)
-end)
-
-chantCompleteRemote.OnServerEvent:Connect(function(player, explosionPosition)
-	-- TODO: Verify chant is legit
-	chantCompleteRemote:FireAllClients(player, explosionPosition)
-
-	coroutine.wrap(function()
+	["ChantComplete"] = coroutine.wrap(function(firingPlayer, remote)
+		-- TODO: Verify chant is legit
+		local explosionPosition = explosionPositions[firingPlayer]
+		local overlapParams = OverlapParams.new()
 		local overlapParamsFilter = {}
+
+		remote:FireAllClients(firingPlayer, explosionPosition)
+
 		for _, player in ipairs(Players:GetPlayers()) do
 			table.insert(overlapParamsFilter, player.Character.HumanoidRootPart)
 		end
-
-		local overlapParams = OverlapParams.new()
 		overlapParams.FilterType = Enum.RaycastFilterType.Include
 		overlapParams.FilterDescendantsInstances = overlapParamsFilter
 
-		task.wait(3)
+		task.wait(ReplicatedStorage.Values.SecondsUntilExplosionAfterChantComplete.Value)
 
 		for _, humanoidRootPart in ipairs(workspace:GetPartBoundsInRadius(explosionPosition, 500, overlapParams)) do
 			local humanoid = humanoidRootPart.Parent.Humanoid
 			humanoid:TakeDamage(humanoid.Health)
 		end
-	end)()
-end)
+	end),
+
+	["ChantCancel"] = function(firingPlayer, remote)
+		remote:FireAllClients(firingPlayer)
+	end,
+}
 
 return module
