@@ -9,20 +9,20 @@ function module.Initialize()
 		end
 
 		for _, remote in ipairs(folder:GetChildren()) do
-			remote.OnServerEvent:Connect(function(player, ...)
+			remote.OnServerEvent:Connect(function(firingPlayer, ...)
+				local ToolsManager = _G.ToolsManager
 				local toolName = folder.Name
 				local eventName = remote.Name
-				local onCooldown = _G.ToolsManager.playerCooldowns[player][eventName]
 
-				if not _G.ToolsManager.playerTools[player][toolName] then
+				if not ToolsManager.hasTool(firingPlayer, toolName) then
 					return
 				end
 
-				if onCooldown ~= nil and onCooldown then
+				if ToolsManager.onCooldown(firingPlayer, eventName) then
 					return
 				end
 
-				_G[toolName .. "Manager"].handleRemote[eventName](player, remote, ...)
+				_G[toolName .. "Manager"].handleRemote[eventName](firingPlayer, remote, ...)
 			end)
 		end
 	end

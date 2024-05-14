@@ -2,18 +2,26 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local remotesFolder = ReplicatedStorage.Remotes.Tool
+local playerTools = {}
+local playerCooldowns = {}
 local module = {}
-module.playerTools = {}
-module.playerCooldowns = {}
 
 local function addTool(player, toolName)
-	module.playerTools[player][toolName] = true
+	playerTools[player][toolName] = true
 	remotesFolder.AddTool:FireClient(player, toolName)
 end
 
-Players.PlayerAdded:Connect(function(player)
-	module.playerTools[player] = {}
-	module.playerCooldowns[player] = {}
+function module.hasTool(player, toolName)
+	return if playerTools[player][toolName] then true else false
+end
+
+function module.onCooldown(player, eventName)
+	return if playerCooldowns[player][eventName] then true else false
+end
+
+Players.PlayerAdded:Connect(coroutine.wrap(function(player)
+	playerTools[player] = {}
+	playerCooldowns[player] = {}
 
 	--TEMP
 	addTool(player, "Explosion")
@@ -21,6 +29,6 @@ Players.PlayerAdded:Connect(function(player)
 	task.wait(0.5)
 	remotesFolder.ForceEquip:FireClient(player, "Revolver")
 	--TEMP
-end)
+end))
 
 return module
