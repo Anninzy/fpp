@@ -1,0 +1,19 @@
+{
+	"editor.detectIndentation": false,
+	"editor.formatOnSave": true,
+	"editor.indentSize": 4,
+	"editor.insertSpaces": false,
+	"editor.minimap.enabled": false,
+	"editor.semanticHighlighting.enabled": true,
+	"explorer.confirmDragAndDrop": false,
+	"files.autoSave": "onFocusChange",
+	"files.autoSaveWhenNoErrors": true,
+	"git.autofetch": true,
+	"luau-lsp.completion.autocompleteEnd": true,
+	"[luau]": {
+		"editor.defaultFormatter": "JohnnyMorganz.stylua"
+	},
+	"[json]": {
+		"editor.defaultFormatter": "vscode.json-language-features"
+	}
+}
