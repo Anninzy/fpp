@@ -10,13 +10,13 @@ local module = {}
 viewModel.Parent = camera
 module.animationTracks = {}
 
---TEMP--
+--TEMP
 local AnimationClipProvider = game:GetService("AnimationClipProvider")
 local animationIds = {
 	["Idle"] = AnimationClipProvider:RegisterAnimationClip(animationsFolder.Idle),
 	["Swap"] = AnimationClipProvider:RegisterAnimationClip(animationsFolder.Swap),
 }
---TEMP--
+--TEMP
 
 for name, id in pairs(animationIds) do
 	local animation = Instance.new("Animation")
