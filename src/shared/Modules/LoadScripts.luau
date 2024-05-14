@@ -8,7 +8,7 @@ return function(requiringScript)
 	end
 
 	for _name, module in pairs(_G) do
-		if module.Initialize == nil then
+		if not module.Initialize then
 			continue
 		end
 
