@@ -1,80 +1,85 @@
 local UserInputService = game:GetService("UserInputService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local toolsRemotes = ReplicatedStorage.Remotes.Tool
+local module = {}
 
-local toolsOwned = {}
-local equippedSlot = nil
+function module.Initialize()
+	local ViewModelController = _G.ViewModelController
+	local RevolverController = _G.RevolverController
 
-local function equipTool()	
-	_G.ViewModelController.swapTool(toolsOwned[equippedSlot])
+	local INPUT_MAP = {
+		["Revolver"] = {
+			[Enum.UserInputType.MouseButton1] = RevolverController.ShootGun,
+			[Enum.UserInputType.MouseButton2] = RevolverController.TossCoin,
+		},
+		["Explosion"] = {
+			[Enum.KeyCode.E] = _G.ExplosionController.BeginChant,
+		},
+	}
+
+	local toolsRemotes = ReplicatedStorage.Remotes.Tool
+	local ownedTools = {}
+	local equippedSlot = nil
+
+	local function viewModelSwapTool()
+		ViewModelController.swapTool(ownedTools[equippedSlot])
+	end
+
+	UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+		if gameProcessedEvent then
+			return
+		end
+
+		if not equippedSlot then
+			return
+		end
+
+		local action = if input.KeyCode == Enum.KeyCode.Unknown then input.UserInputType else input.KeyCode
+		local actionFunction = INPUT_MAP[ownedTools[equippedSlot]][action]
+
+		if not actionFunction then
+			return
+		end
+
+		actionFunction()
+	end)
+
+	UserInputService.InputChanged:Connect(function(input, gameProcessedEvent)
+		if gameProcessedEvent then
+			return
+		end
+
+		if input.UserInputType ~= Enum.UserInputType.MouseWheel then
+			return
+		end
+
+		if #ownedTools == 0 then
+			return
+		end
+
+		if ViewModelController.animationTracks["Swap"].IsPlaying then
+			return
+		end
+
+		local lastSlot = #ownedTools
+
+		if input.Position.Z > 0 then -- Scroll up
+			equippedSlot = if equippedSlot - 1 == 0 then lastSlot else equippedSlot - 1
+		else -- Scroll down
+			equippedSlot = if equippedSlot + 1 > lastSlot then 1 else equippedSlot + 1
+		end
+
+		viewModelSwapTool()
+	end)
+
+	toolsRemotes.ForceEquip.OnClientEvent:Connect(function(toolName)
+		equippedSlot = table.find(ownedTools, toolName)
+		viewModelSwapTool()
+	end)
+
+	toolsRemotes.AddTool.OnClientEvent:Connect(function(toolName)
+		table.insert(ownedTools, toolName)
+	end)
 end
 
-UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
-	if gameProcessedEvent then
-		return
-	end
-	
-	if not equippedSlot then
-		return
-	end
-
-	local equippedTool = toolsOwned[equippedSlot]
-
-	if equippedTool == "Revolver" then
-		if input.UserInputType == Enum.UserInputType.MouseButton1 then
-			_G.RevolverController.ShootGun()
-		elseif input.UserInputType == Enum.UserInputType.MouseButton2 then
-			_G.RevolverController.TossCoin()
-		end
-	elseif equippedTool == "Explosion" then
-		if input.KeyCode == Enum.KeyCode.E then
-			_G.ExplosionController.BeginChant()
-		end
-	end
-end)
-
-UserInputService.InputChanged:Connect(function(input, gameProcessedEvent)
-	if gameProcessedEvent then
-		return
-	end
-
-	if input.UserInputType ~= Enum.UserInputType.MouseWheel then
-		return
-	end
-
-	if #toolsOwned == 0 then
-		return
-	end
-	
-	if _G.ViewModelController.animationTracks["Swap"].IsPlaying then
-		return
-	end
-
-	if input.Position.Z > 0 then
-		if equippedSlot - 1 == 0 then
-			equippedSlot = #toolsOwned
-		else
-			equippedSlot -= 1
-		end
-	else
-		if equippedSlot + 1 > #toolsOwned then
-			equippedSlot = 1
-		else
-			equippedSlot += 1
-		end
-	end
-
-	equipTool()
-end)
-
-toolsRemotes.ForceEquip.OnClientEvent:Connect(function(toolName)
-	equippedSlot = table.find(toolsOwned, toolName)
-	equipTool()
-end)
-
-toolsRemotes.AddTool.OnClientEvent:Connect(function(toolName)
-	table.insert(toolsOwned, toolName)
-end)
-
-return nil
+return module
