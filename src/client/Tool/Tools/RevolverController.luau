@@ -35,13 +35,13 @@ local function raycastBeam(origin, direction)
 	bulletTrail.Attachment0 = beamAttachment0
 	bulletTrail.Attachment1 = beamAttachment1
 	bulletTrail.Parent = terrain
-	
+
 	muzzleAttachment.MuzzleFlash:Emit(1)
-	TweenService:Create(bulletTrail, TweenInfo.new(0.1), {Width0 = 0, Width1 = 0}):Play()
+	TweenService:Create(bulletTrail, TweenInfo.new(0.1), { Width0 = 0, Width1 = 0 }):Play()
 	Debris:AddItem(beamAttachment0, 0.1)
 	Debris:AddItem(beamAttachment1, 0.1)
 	Debris:AddItem(bulletTrail, 0.1)
-	
+
 	if not raycastResult then
 		return
 	end
@@ -63,7 +63,7 @@ local function raycastBeam(origin, direction)
 
 		--for _, target in ipairs(targets) do
 		--	local distance = (target.Position - position).Magnitude
-		--	local closest = {next(closest)} 
+		--	local closest = {next(closest)}
 
 		--	if distance < closest[2] then
 		--		closest[target] = distance
@@ -79,8 +79,13 @@ if Players.LocalPlayer.Character then
 end
 
 Players.LocalPlayer.CharacterAdded:Connect(function(character)
+	local filter = {}
 	localCharacter = character
-	raycastParams.FilterDescendantsInstances = {localCharacter}
+
+	table.insert(filter, localCharacter)
+	table.insert(filter, camera)
+
+	raycastParams.FilterDescendantsInstances = filter
 end)
 
 function module.ShootGun()
@@ -99,7 +104,9 @@ function module.TossCoin()
 	coinModel.Parent = workspace.Attackable
 	Debris:AddItem(coinModel, 5)
 
-	coinModel.PrimaryPart.AssemblyLinearVelocity = Vector3.new(0, 120, 0) + lookVector * 90 + humanoidRootPart.AssemblyLinearVelocity * 5
+	coinModel.PrimaryPart.AssemblyLinearVelocity = Vector3.new(0, 120, 0)
+		+ lookVector * 90
+		+ humanoidRootPart.AssemblyLinearVelocity * 5
 end
 
 return module
