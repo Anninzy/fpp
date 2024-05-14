@@ -1,28 +1,30 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+
+local assetsFolder = ReplicatedStorage.Assets
+local animationsFolder = assetsFolder.Animations
+local camera = workspace.CurrentCamera
+local viewModel = assetsFolder.ViewModel:Clone()
 local module = {}
 
-local RunService = game:GetService("RunService")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-
-local animationsFolder = ReplicatedStorage.Assets.Animations
-local camera = workspace.CurrentCamera
-local viewModel = ReplicatedStorage.Assets.ViewModel:Clone()
 viewModel.Parent = camera
-
 module.animationTracks = {}
 
 --TEMP--
 local AnimationClipProvider = game:GetService("AnimationClipProvider")
 local animationIds = {
 	["Idle"] = AnimationClipProvider:RegisterAnimationClip(animationsFolder.Idle),
-	["Swap"] = AnimationClipProvider:RegisterAnimationClip(animationsFolder.Swap)
+	["Swap"] = AnimationClipProvider:RegisterAnimationClip(animationsFolder.Swap),
 }
 --TEMP--
 
 for name, id in pairs(animationIds) do
 	local animation = Instance.new("Animation")
+
 	animation.AnimationId = id
 	module.animationTracks[name] = viewModel.AnimationController.Animator:LoadAnimation(animation)
 end
+
 module.animationTracks["Idle"]:Play()
 
 RunService.RenderStepped:Connect(function(_deltaTime)
@@ -30,9 +32,9 @@ RunService.RenderStepped:Connect(function(_deltaTime)
 end)
 
 function module.swapTool(toolName)
-	local tool = ReplicatedStorage.Assets.Tools[toolName].Handle:Clone()
+	local tool = assetsFolder.Tools[toolName].Handle:Clone()
 	local oldTool = viewModel:FindFirstChild("Handle")
-	
+
 	module.animationTracks["Swap"]:Play()
 	module.animationTracks["Swap"]:GetMarkerReachedSignal("HandHidden"):Wait()
 
