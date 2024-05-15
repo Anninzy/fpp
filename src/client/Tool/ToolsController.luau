@@ -5,18 +5,6 @@ local module = {}
 
 function module.Initialize()
 	local ViewModelController = _G.ViewModelController
-	local RevolverController = _G.RevolverController
-
-	local INPUT_MAP = {
-		["Revolver"] = {
-			[Enum.UserInputType.MouseButton1] = RevolverController.ShootGun,
-			[Enum.UserInputType.MouseButton2] = RevolverController.TossCoin,
-		},
-		["Explosion"] = {
-			[Enum.KeyCode.E] = _G.ExplosionController.BeginChant,
-		},
-	}
-
 	local toolsRemotes = ReplicatedStorage.Remotes.Tool
 	local ownedTools = {}
 	local equippedSlot = nil
@@ -35,7 +23,7 @@ function module.Initialize()
 		end
 
 		local action = if input.KeyCode == Enum.KeyCode.Unknown then input.UserInputType else input.KeyCode
-		local actionFunction = INPUT_MAP[ownedTools[equippedSlot]][action]
+		local actionFunction = _G[ownedTools[equippedSlot] .. "Controller"][action]
 
 		if not actionFunction then
 			return
