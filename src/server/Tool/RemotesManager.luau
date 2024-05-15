@@ -1,4 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
 
 local module = {}
 
@@ -25,6 +26,16 @@ function module.Initialize()
 				_G[toolName .. "Manager"].handleRemote[eventName](firingPlayer, remote, ...)
 			end)
 		end
+	end
+end
+
+function module.FireAllClientsExcludeFiringPlayer(firingPlayer, remote, ...)
+	for _, player in ipairs(Players:GetPlayers()) do
+		if firingPlayer then
+			continue
+		end
+
+		remote:FireClient(player, ...)
 	end
 end
 
