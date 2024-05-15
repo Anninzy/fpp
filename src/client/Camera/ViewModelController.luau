@@ -32,6 +32,10 @@ module.swapTool = coroutine.wrap(function(toolName)
 	tool.Parent = viewModel
 end)
 
+viewModel.Parent = camera
+RunService.RenderStepped:Connect(function(_deltaTime)
+	viewModel:PivotTo(camera.CFrame)
+end)
 for name, id in pairs(animationIds) do
 	local animation = Instance.new("Animation")
 
@@ -40,10 +44,5 @@ for name, id in pairs(animationIds) do
 end
 
 module.animationTracks["Idle"]:Play()
-
-RunService.RenderStepped:Connect(function(_deltaTime)
-	viewModel:PivotTo(camera.CFrame)
-end)
-viewModel.Parent = camera
 
 return module
