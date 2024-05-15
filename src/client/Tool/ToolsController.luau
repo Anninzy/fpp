@@ -60,13 +60,13 @@ function module.Initialize()
 		viewModelSwapTool()
 	end)
 
+	toolsRemotes.AddTool.OnClientEvent:Connect(function(toolName)
+		table.insert(ownedTools, toolName)
+	end)
+
 	toolsRemotes.ForceEquip.OnClientEvent:Connect(function(toolName)
 		equippedSlot = table.find(ownedTools, toolName)
 		viewModelSwapTool()
-	end)
-
-	toolsRemotes.AddTool.OnClientEvent:Connect(function(toolName)
-		table.insert(ownedTools, toolName)
 	end)
 end
 

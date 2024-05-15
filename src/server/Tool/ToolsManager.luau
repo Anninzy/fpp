@@ -19,16 +19,17 @@ function module.onCooldown(player, eventName)
 	return if playerCooldowns[player][eventName] then true else false
 end
 
-Players.PlayerAdded:Connect(coroutine.wrap(function(player)
-	playerTools[player] = {}
-	playerCooldowns[player] = {}
+Players.PlayerAdded:Connect(function(player)
+	coroutine.wrap(function()
+		playerTools[player] = {}
+		playerCooldowns[player] = {}
 
-	--TEMP
-	addTool(player, "Explosion")
-	addTool(player, "Revolver")
-	task.wait(0.5)
-	remotesFolder.ForceEquip:FireClient(player, "Revolver")
-	--TEMP
-end))
+		--TEMP
+		addTool(player, "Explosion")
+		addTool(player, "Revolver")
+		remotesFolder.ForceEquip:FireClient(player, "Revolver")
+		--TEMP
+	end)()
+end)
 
 return module
