@@ -7,9 +7,6 @@ local camera = workspace.CurrentCamera
 local viewModel = assetsFolder.ViewModel:Clone()
 local module = {}
 
-viewModel.Parent = camera
-module.animationTracks = {}
-
 --TEMP
 local AnimationClipProvider = game:GetService("AnimationClipProvider")
 local animationIds = {
@@ -18,18 +15,7 @@ local animationIds = {
 }
 --TEMP
 
-for name, id in pairs(animationIds) do
-	local animation = Instance.new("Animation")
-
-	animation.AnimationId = id
-	module.animationTracks[name] = viewModel.AnimationController.Animator:LoadAnimation(animation)
-end
-
-module.animationTracks["Idle"]:Play()
-
-RunService.RenderStepped:Connect(function(_deltaTime)
-	viewModel:PivotTo(camera.CFrame)
-end)
+module.animationTracks = {}
 
 module.swapTool = coroutine.wrap(function(toolName)
 	local tool = assetsFolder.Tools[toolName].Handle:Clone()
@@ -45,5 +31,19 @@ module.swapTool = coroutine.wrap(function(toolName)
 	tool.RightArm.Part0 = viewModel.RightArm
 	tool.Parent = viewModel
 end)
+
+for name, id in pairs(animationIds) do
+	local animation = Instance.new("Animation")
+
+	animation.AnimationId = id
+	module.animationTracks[name] = viewModel.AnimationController.Animator:LoadAnimation(animation)
+end
+
+module.animationTracks["Idle"]:Play()
+
+RunService.RenderStepped:Connect(function(_deltaTime)
+	viewModel:PivotTo(camera.CFrame)
+end)
+viewModel.Parent = camera
 
 return module
