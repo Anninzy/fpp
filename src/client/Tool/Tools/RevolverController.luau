@@ -10,7 +10,7 @@ local gunShotRemote = remotesFolder.GunShot
 local tossCoinRemote = remotesFolder.TossCoin
 local module = {}
 
-local function createShotVisuals(muzzleAttachment, endPosition, direction)
+local function createShotVisuals(muzzleAttachment, endPosition)
 	local terrain = workspace.Terrain
 
 	local beamAttachment0 = Instance.new("Attachment")
@@ -18,7 +18,7 @@ local function createShotVisuals(muzzleAttachment, endPosition, direction)
 	beamAttachment0.Parent = terrain
 
 	local beamAttachment1 = Instance.new("Attachment")
-	beamAttachment1.WorldPosition = if endPosition then endPosition else muzzleAttachment.WorldPosition + direction
+	beamAttachment1.WorldPosition = endPosition
 	beamAttachment1.Parent = terrain
 
 	local bulletTrail = assetsFolder.BulletTrail:Clone()
@@ -33,75 +33,51 @@ local function createShotVisuals(muzzleAttachment, endPosition, direction)
 	Debris:AddItem(bulletTrail, 0.1)
 end
 
-module[Enum.UserInputType.MouseButton1] = function()
-	local camera = workspace.CurrentCamera
-	local character = Players.LocalPlayer.Character
-
-	local headPosition = character.Head.Position
-	local mouseLocation = UserInputService:GetMouseLocation()
-	local direction = camera:ViewportPointToRay(mouseLocation.X, mouseLocation.Y).Direction * 100
-	local raycastParams = RaycastParams.new()
-	raycastParams.FilterType = Enum.RaycastFilterType.Exclude
-	raycastParams.FilterDescendantsInstances = { character }
-	local raycastResult = workspace:Raycast(headPosition, direction, raycastParams)
-	local endPosition = if raycastResult then raycastResult.Position else nil
-
-	gunShotRemote:FireServer(headPosition, direction)
-	createShotVisuals(camera.ViewModel.Handle.Frame.Muzzle, endPosition, direction)
-
-	-- if not raycastResult then
-	-- 	return
-	-- end
-
-	-- local raycastResultInstance = raycastResult.Instance
-
-	-- if not raycastResultInstance:FindFirstAncestor("Attackable") then
-	-- 	return
-	-- end
-
-	-- local humanoid = raycastResultInstance.Parent:FindFirstChildWhichIsA("Humanoid")
-
-	-- if raycastResultInstance.Name == "Hitbox" and not humanoid then
-	-- 	print("Hit coin")
-	-- 	--local targets = workspace.Attackable:GetChildren()
-	-- 	--local closest = {
-	-- 	--	[targets[1]] = (targets[1].PrimaryPart.Position - position).Magnitude
-	-- 	--}
-
-	-- 	--for _, target in ipairs(targets) do
-	-- 	--	local distance = (target.Position - position).Magnitude
-	-- 	--	local closest = {next(closest)}
-
-	-- 	--	if distance < closest[2] then
-	-- 	--		closest[target] = distance
-	-- 	--	end
-	-- 	--end
-	-- else
-	-- 	ReplicatedStorage.Remotes.Tool.Revolver.ShotHit:FireServer(humanoid)
-	-- end
-end
-
-module[Enum.UserInputType.MouseButton2] = function()
-	local humanoidRootPart = Players.LocalPlayer.Character.HumanoidRootPart
-	local humanoidRootPartCFrame = humanoidRootPart.CFrame
+local function createCoinVisuals(humanoidRootPartCFrame, humanoidRootPartAssemblyLinearVelocity)
 	local lookVector = humanoidRootPartCFrame.LookVector
-
-	tossCoinRemote:FireServer(humanoidRootPartCFrame, humanoidRootPart.AssemblyLinearVelocity)
 
 	local coinModel = assetsFolder.Coin:Clone()
 	coinModel:PivotTo(humanoidRootPartCFrame * CFrame.Angles(math.rad(90), 0, math.rad(90)) + lookVector * 1.5)
 	coinModel.Parent = workspace.Attackable
 	coinModel.PrimaryPart.AssemblyLinearVelocity = Vector3.new(0, 120, 0)
 		+ lookVector * 90
-		+ humanoidRootPart.AssemblyLinearVelocity * 5
+		+ humanoidRootPartAssemblyLinearVelocity * 5
 
 	Debris:AddItem(coinModel, 5)
 end
 
-gunShotRemote.OnClientEvent:Connect(function(firingPlayer)
-	createShotVisuals(muzzleAttachment, endPosition, direction)
-end)
+module[Enum.UserInputType.MouseButton1] = function()
+	local camera = workspace.CurrentCamera
+	local character = Players.LocalPlayer.Character
+	local mouseLocation = UserInputService:GetMouseLocation()
+	local direction = camera:ViewportPointToRay(mouseLocation.X, mouseLocation.Y).Direction * 100
+	local raycastResult = ReplicatedStorage.Modules.RaycastBullet(character, direction)
+	local muzzleAttachment = camera.ViewModel.Handle.Frame.Muzzle
+	local endPosition = if raycastResult then raycastResult.Position else muzzleAttachment
 
-tossCoinRemote.OnClientEvent:Connect(function(firingPlayer) end)
+	gunShotRemote:FireServer(character, direction)
+	createShotVisuals(muzzleAttachment, endPosition)
+end
+
+module[Enum.UserInputType.MouseButton2] = function()
+	local humanoidRootPart = Players.LocalPlayer.Character.HumanoidRootPart
+	local humanoidRootPartCFrame = humanoidRootPart.CFrame
+	local humanoidRootPartAssemblyLinearVelocity = humanoidRootPart.AssemblyLinearVelocity
+
+	tossCoinRemote:FireServer(humanoidRootPartCFrame, humanoidRootPartAssemblyLinearVelocity)
+	createCoinVisuals(humanoidRootPartCFrame, humanoidRootPartAssemblyLinearVelocity)
+end
+
+-- TODO: Implement after client-server ViewModel sync is implemented.
+-- gunShotRemote.OnClientEvent:Connect(function(muzzleAttachment, endPosition, direction)
+-- 	createShotVisuals(muzzleAttachment, endPosition)
+-- end)
+
+tossCoinRemote.OnClientEvent:Connect(
+	function(firingPlayer, humanoidRootPartCFrame, humanoidRootPartAssemblyLinearVelocity)
+		-- TODO: Play animation on firingPlayer
+		createCoinVisuals(humanoidRootPartCFrame, humanoidRootPartAssemblyLinearVelocity)
+	end
+)
 
 return module

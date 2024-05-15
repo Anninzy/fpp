@@ -31,11 +31,11 @@ end
 
 function module.FireAllClientsExcludeFiringPlayer(firingPlayer, remote, ...)
 	for _, player in ipairs(Players:GetPlayers()) do
-		if firingPlayer then
+		if player == firingPlayer then
 			continue
 		end
 
-		remote:FireClient(player, ...)
+		remote:FireClient(player, firingPlayer, ...)
 	end
 end
 

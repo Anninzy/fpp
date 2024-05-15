@@ -1,21 +1,31 @@
 local module = {}
 
-module.handleRemote = {
-	["GunShot"] = function(player, remote, hit, ricochetCoins)
-		-- TODO: Verify if raycast is legit and deal damage. Do this by sending client info (mouse, character, ricochets, hit locations, and calculate with error margin
-		-- TODO: Determine if direct hit, ricochet, or miss
-		local humanoid = hit.Parent:FindFirstChild("Humanoid")
+function module.Initialize()
+	local RemotesManager = _G.RemotesManager
 
-		remote:FireAllClients(player, hit, ricochetCoins)
+	module.handleRemote = {
+		["GunShot"] = function(firingPlayer, remote, headPosition, direction)
+			-- TODO: Verify if raycast is legit and deal damage. Do this by sending client info (mouse, character, ricochets, hit locations, and calculate with error margin
+			-- TODO: Determine if direct hit, ricochet, or miss
 
-		if humanoid then -- The last hit could be a coin due to lack of target.
-			humanoid:TakeDamage(10)
-		end
-	end,
+			-- RemotesManager.FireAllClientsExcludeFiringPlayer(firingPlayer, remote)
+			-- TODO: Implement after client-server ViewModel sync is implemented.
 
-	["TossCoin"] = function(player, remote)
-		remote:FireAllClients(player)
-	end,
-}
+			local raycastParams = RaycastParams.new()
+			raycastParams.FilterType = Enum.RaycastFilterType.Exclude
+			raycastParams.FilterDescendantsInstances = { firingPlayer.Character }
+			local raycastResult = workspace:Raycast(headPosition, direction, raycastParams)
+		end,
+
+		["TossCoin"] = function(firingPlayer, remote, humanoidRootPartCFrame, humanoidRootPartAssemblyLinearVelocity)
+			RemotesManager.FireAllClientsExcludeFiringPlayer(
+				firingPlayer,
+				remote,
+				humanoidRootPartCFrame,
+				humanoidRootPartAssemblyLinearVelocity
+			)
+		end,
+	}
+end
 
 return module
