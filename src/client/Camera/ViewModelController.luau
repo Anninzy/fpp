@@ -17,20 +17,22 @@ local animationIds = {
 
 module.animationTracks = {}
 
-module.swapTool = coroutine.wrap(function(toolName)
-	local tool = assetsFolder.Tools[toolName].Handle:Clone()
-	local oldTool = viewModel:FindFirstChild("Handle")
+function module.swapTool(toolName)
+	coroutine.wrap(function()
+		local tool = assetsFolder.Tools[toolName].Handle:Clone()
+		local oldTool = viewModel:FindFirstChild("Handle")
 
-	module.animationTracks["Swap"]:Play()
-	module.animationTracks["Swap"]:GetMarkerReachedSignal("HandHidden"):Wait()
+		module.animationTracks["Swap"]:Play()
+		module.animationTracks["Swap"]:GetMarkerReachedSignal("HandHidden"):Wait()
 
-	if oldTool then
-		oldTool:Destroy()
-	end
+		if oldTool then
+			oldTool:Destroy()
+		end
 
-	tool.RightArm.Part0 = viewModel.RightArm
-	tool.Parent = viewModel
-end)
+		tool.RightArm.Part0 = viewModel.RightArm
+		tool.Parent = viewModel
+	end)()
+end
 
 viewModel.Parent = camera
 RunService.RenderStepped:Connect(function(_deltaTime)
