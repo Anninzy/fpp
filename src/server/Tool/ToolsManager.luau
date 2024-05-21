@@ -7,16 +7,16 @@ local playerCooldowns = {}
 local module = {}
 
 local function addTool(player, toolName)
-	playerTools[player][toolName] = true
+	table.insert(playerTools[player], toolName)
 	remotesFolder.AddTool:FireClient(player, toolName)
 end
 
 function module.hasTool(player, toolName)
-	return if playerTools[player][toolName] then true else false
+	return if table.find(playerTools[player], toolName) then true else false
 end
 
 function module.onCooldown(player, eventName)
-	return if playerCooldowns[player][eventName] then true else false
+	return if table.find(playerCooldowns[player], eventName) then true else false
 end
 
 Players.PlayerAdded:Connect(function(player)
